@@ -1,0 +1,315 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover">
+<title>Otchłań Launcher</title>
+<style>
+:root{
+  --bg:#0b0706; --panel:#15100d; --panel2:#1c1511; --line:#3a2a1c;
+  --gold:#d8b06a; --gold2:#f3d79a; --goldDim:#8a6c3c;
+  --ember:#ff6a1f; --blood:#8e1b14; --text:#e9dccb; --mute:#9c8a76; --ok:#9fc47a;
+}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{margin:0;height:100%;background:var(--bg);color:var(--text);
+  font-family:Georgia,"Times New Roman",serif;overflow-x:hidden}
+body{min-height:100%;user-select:none;-webkit-user-select:none}
+#fx{position:fixed;inset:0;width:100%;height:100%;z-index:0;pointer-events:none}
+.glow{position:fixed;left:50%;top:-10vh;width:140vw;height:80vh;transform:translateX(-50%);
+  background:radial-gradient(ellipse at center,rgba(142,27,20,.45),rgba(142,27,20,0) 65%);z-index:0;pointer-events:none}
+main{position:relative;z-index:1;max-width:520px;margin:0 auto;padding:28px 18px 40px}
+
+/* header */
+.crest{text-align:center;margin:18px 0 22px}
+.sigil{width:86px;height:86px;margin:0 auto 6px;display:block;filter:drop-shadow(0 0 14px rgba(255,106,31,.45))}
+h1{margin:0;font-size:46px;letter-spacing:.14em;font-weight:normal;
+  background:linear-gradient(180deg,var(--gold2) 0%,var(--gold) 45%,#7d5a2a 100%);
+  -webkit-background-clip:text;background-clip:text;color:transparent;
+  text-shadow:0 0 30px rgba(216,176,106,.15)}
+.sub{margin-top:4px;color:var(--goldDim);letter-spacing:.42em;font-size:12px;text-transform:uppercase}
+.rule{height:1px;margin:16px auto 0;width:70%;background:linear-gradient(90deg,transparent,var(--goldDim),transparent)}
+
+/* panel */
+.panel{position:relative;background:linear-gradient(180deg,var(--panel2),var(--panel));
+  border:1px solid var(--line);border-radius:6px;padding:18px 16px;margin:14px 0;
+  box-shadow:inset 0 1px 0 rgba(243,215,154,.06),0 10px 30px rgba(0,0,0,.5)}
+.panel::before,.panel::after{content:"";position:absolute;width:12px;height:12px;border:1px solid var(--goldDim)}
+.panel::before{top:-1px;left:-1px;border-right:0;border-bottom:0}
+.panel::after{bottom:-1px;right:-1px;border-left:0;border-top:0}
+.ptitle{font-size:12px;letter-spacing:.3em;text-transform:uppercase;color:var(--gold);margin:0 0 12px}
+
+.vers{display:flex;gap:10px}
+.v{flex:1;background:rgba(0,0,0,.25);border:1px solid #2a1f16;border-radius:4px;padding:10px;text-align:center}
+.v small{display:block;color:var(--mute);font-size:11px;letter-spacing:.12em;text-transform:uppercase}
+.v b{display:block;font-size:24px;font-weight:normal;color:var(--gold2);margin-top:4px}
+#status{margin:14px 0 4px;text-align:center;min-height:22px;color:var(--mute);font-size:15px}
+#status.ok{color:var(--ok)} #status.warn{color:#f0a35a} #status.err{color:#e0675a}
+
+/* button */
+.btn{display:block;width:100%;margin-top:12px;padding:18px 10px;border-radius:4px;cursor:pointer;
+  font-family:inherit;font-size:22px;letter-spacing:.22em;text-transform:uppercase;color:#1a0d05;
+  border:1px solid #f6d58f;background:linear-gradient(180deg,#f6d58f 0%,#d39a43 48%,#a4661f 100%);
+  box-shadow:0 0 0 3px rgba(0,0,0,.6),0 0 24px rgba(255,140,40,.35),inset 0 1px 0 rgba(255,255,255,.5);
+  text-shadow:0 1px 0 rgba(255,240,200,.5);transition:transform .08s,filter .2s}
+.btn small{display:block;font-size:12px;letter-spacing:.2em;margin-top:4px;opacity:.8}
+.btn:active{transform:scale(.98);filter:brightness(1.15)}
+.btn.update{background:linear-gradient(180deg,#ff9a5a 0%,#d4521f 50%,#8e1b14 100%);border-color:#ffb27a;color:#fff3e6;
+  text-shadow:0 1px 2px rgba(0,0,0,.6);animation:pulse 1.8s ease-in-out infinite}
+.btn[disabled]{filter:grayscale(.8) brightness(.55);animation:none;pointer-events:none}
+@keyframes pulse{0%,100%{box-shadow:0 0 0 3px rgba(0,0,0,.6),0 0 18px rgba(255,90,30,.35)}50%{box-shadow:0 0 0 3px rgba(0,0,0,.6),0 0 34px rgba(255,90,30,.75)}}
+.link{display:block;margin:12px auto 0;background:none;border:0;color:var(--gold);font-family:inherit;font-size:14px;
+  text-decoration:underline;text-underline-offset:3px;cursor:pointer}
+.hide{display:none!important}
+
+/* progress */
+#prog{margin-top:14px}
+.bar{height:16px;border-radius:3px;background:#0d0806;border:1px solid #3a2a1c;overflow:hidden;position:relative}
+.fill{height:100%;width:0;background:linear-gradient(90deg,#8e1b14,#ff6a1f,#ffcf7a);box-shadow:0 0 14px #ff6a1f;transition:width .15s}
+.ptxt{display:flex;justify-content:space-between;color:var(--mute);font-size:13px;margin-top:6px}
+
+/* banners */
+.banner{border:1px solid #7a3a14;background:linear-gradient(180deg,rgba(142,27,20,.35),rgba(60,15,8,.35));border-radius:5px;
+  padding:12px 14px;margin:12px 0;font-size:14px;line-height:1.45}
+.banner b{color:var(--gold2)}
+.banner .mini{margin-top:10px;padding:10px;font-size:15px;letter-spacing:.14em}
+
+/* news / changelog */
+.news{border-left:2px solid var(--blood);padding:2px 0 2px 12px;margin:0 0 14px}
+.news:last-child{margin-bottom:0}
+.news .d{color:var(--mute);font-size:12px}
+.news h3{margin:2px 0 4px;font-size:17px;font-weight:normal;color:var(--gold2)}
+.news p{margin:0;font-size:14px;line-height:1.5;color:#d6c7b4}
+details{border-top:1px solid #2a1f16;padding:10px 0}
+details:first-of-type{border-top:0;padding-top:0}
+summary{list-style:none;cursor:pointer;display:flex;justify-content:space-between;align-items:center;font-size:17px;color:var(--gold2)}
+summary::-webkit-details-marker{display:none}
+summary span{color:var(--mute);font-size:12px;margin-left:auto}
+summary::after{content:"▾";color:var(--goldDim);margin-left:8px;transition:transform .2s}
+details[open] summary::after{transform:rotate(180deg)}
+details ul{margin:8px 0 0;padding-left:20px;font-size:14px;line-height:1.55;color:#d6c7b4}
+.tag{display:inline-block;font-size:10px;letter-spacing:.15em;padding:2px 6px;border-radius:2px;margin-left:8px;
+  background:var(--blood);color:#ffe2c8;vertical-align:middle}
+.empty{color:var(--mute);font-size:14px;text-align:center}
+
+footer{margin-top:22px;text-align:center;color:#6d5d4c;font-size:12px;line-height:1.7}
+footer button{background:none;border:1px solid #3a2a1c;color:var(--gold);border-radius:3px;padding:7px 14px;font-family:inherit;font-size:13px;margin-bottom:8px}
+
+/* modal */
+#modal{position:fixed;inset:0;z-index:5;background:rgba(0,0,0,.78);display:flex;align-items:center;justify-content:center;padding:20px}
+#modal .panel{max-width:440px;width:100%}
+#modal p{font-size:15px;line-height:1.55;margin:0 0 6px}
+#modal ol{font-size:14px;line-height:1.6;padding-left:20px;color:#d6c7b4}
+</style>
+</head>
+<body>
+<canvas id="fx"></canvas>
+<div class="glow"></div>
+<main>
+  <div class="crest">
+    <svg class="sigil" viewBox="0 0 100 100">
+      <defs>
+        <linearGradient id="g" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#f3d79a"/><stop offset=".55" stop-color="#d8b06a"/><stop offset="1" stop-color="#7d5a2a"/></linearGradient>
+        <radialGradient id="r"><stop offset="0" stop-color="#ffcf7a"/><stop offset=".4" stop-color="#ff6a1f"/><stop offset="1" stop-color="#8e1b14" stop-opacity="0"/></radialGradient>
+      </defs>
+      <circle cx="50" cy="50" r="22" fill="url(#r)"/>
+      <circle cx="50" cy="50" r="40" fill="none" stroke="url(#g)" stroke-width="3"/>
+      <circle cx="50" cy="50" r="33" fill="none" stroke="url(#g)" stroke-width="1" stroke-dasharray="2 4"/>
+      <path d="M50 4 L56 16 L50 13 L44 16 Z M50 96 L56 84 L50 87 L44 84 Z M4 50 L16 44 L13 50 L16 56 Z M96 50 L84 44 L87 50 L84 56 Z" fill="url(#g)"/>
+      <path d="M50 30 L58 50 L50 70 L42 50 Z" fill="none" stroke="#1a0d05" stroke-width="2.5"/>
+    </svg>
+    <h1>OTCHŁAŃ</h1>
+    <div class="sub">Kroniki Popiołu</div>
+    <div class="rule"></div>
+  </div>
+
+  <div id="launcherBanner" class="banner hide">
+    Nowa wersja launchera: <b id="lbVer"></b>
+    <button class="btn mini" id="lbBtn">Zaktualizuj launcher</button>
+  </div>
+
+  <section class="panel">
+    <div class="ptitle">Gra</div>
+    <div class="vers">
+      <div class="v"><small>Zainstalowana</small><b id="vInst">—</b></div>
+      <div class="v"><small>Najnowsza</small><b id="vLatest">…</b></div>
+    </div>
+    <div id="status">Sprawdzam aktualizacje…</div>
+    <div id="prog" class="hide">
+      <div class="bar"><div class="fill" id="fill"></div></div>
+      <div class="ptxt"><span id="pPct">0%</span><span id="pMb"></span></div>
+    </div>
+    <button class="btn" id="main" disabled>…</button>
+    <button class="link hide" id="playOld">Graj w obecną wersję</button>
+  </section>
+
+  <section class="panel">
+    <div class="ptitle">Wieści z Otchłani</div>
+    <div id="news"><div class="empty">…</div></div>
+  </section>
+
+  <section class="panel">
+    <div class="ptitle">Lista zmian</div>
+    <div id="log"><div class="empty">…</div></div>
+  </section>
+
+  <footer>
+    <button id="recheck">⟳ Sprawdź ponownie</button><br>
+    Launcher <span id="lVer"></span> · aktualizacje z GitHub
+  </footer>
+</main>
+
+<div id="modal" class="hide">
+  <div class="panel">
+    <div class="ptitle">Potrzebne pozwolenie</div>
+    <p>Android musi pozwolić launcherowi instalować gry. Robi się to <b>tylko raz</b>:</p>
+    <ol>
+      <li>Naciśnij <b>Otwórz ustawienia</b>.</li>
+      <li>Włącz <b>„Zezwalaj z tego źródła”</b>.</li>
+      <li>Wróć przyciskiem Wstecz — instalacja ruszy sama.</li>
+    </ol>
+    <button class="btn" id="permBtn">Otwórz ustawienia</button>
+    <button class="link" id="permCancel">Anuluj</button>
+  </div>
+</div>
+
+<script>
+(function(){
+var L = window.Launcher || {   // browser preview stub
+  state:function(){return JSON.stringify({gameCode:-1,gameName:"",launcherCode:1,launcherName:"1.0",canInstall:true,busy:false})},
+  check:function(){fetch("../version.json").then(function(r){return r.text()}).then(function(t){onManifest(t)}).catch(function(e){onManifestError(String(e))})},
+  download:function(){var p=0,t=900000,iv=setInterval(function(){p+=60000;onProgress(Math.min(p,t),t);if(p>=t){clearInterval(iv);onDownloaded();setTimeout(function(){onInstallStarted()},300)}},80)},
+  play:function(){alert("Uruchamianie gry")}, openPermission:function(){}, cancelPending:function(){}
+};
+var $=function(id){return document.getElementById(id)};
+var man=null, st={}, phase="checking", lastErr="";
+
+function S(){ try{ st=JSON.parse(L.state()) }catch(e){ st={} } return st }
+function esc(s){return String(s==null?"":s).replace(/[&<>"]/g,function(c){return{"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]})}
+function mb(b){return (b/1048576).toFixed(1).replace(".",",")+" MB"}
+function setStatus(t,cls){var s=$("status");s.textContent=t;s.className=cls||""}
+function setBtn(t,cls,dis,sub){var b=$("main");b.innerHTML=esc(t)+(sub?"<small>"+esc(sub)+"</small>":"");b.className="btn"+(cls?" "+cls:"");b.disabled=!!dis}
+
+function render(){
+  S();
+  var inst = st.gameCode>0;
+  $("vInst").textContent = inst ? (st.gameName||("#"+st.gameCode)) : "brak";
+  $("lVer").textContent = st.launcherName||"";
+  var g = man && man.game;
+  $("vLatest").textContent = g ? g.versionName : (phase==="offline"?"?":"…");
+  $("playOld").classList.add("hide");
+
+  // launcher self-update banner
+  var l = man && man.launcher;
+  if (l && st.launcherCode>0 && l.versionCode>st.launcherCode && phase!=="downloading" && phase!=="installing"){
+    $("lbVer").textContent=l.versionName; $("launcherBanner").classList.remove("hide");
+  } else $("launcherBanner").classList.add("hide");
+
+  if (phase==="downloading"){ setBtn("Pobieranie…","",true); return }
+  if (phase==="installing"){ $("prog").classList.add("hide"); setStatus("Instalowanie… potwierdź w oknie systemu","warn"); setBtn("Instalowanie…","",true); return }
+  $("prog").classList.add("hide");
+
+  if (phase==="checking"){ setStatus("Sprawdzam aktualizacje…"); setBtn(inst?"Graj":"…","",!inst); return }
+  if (phase==="offline"){
+    if (inst){ setStatus("Brak połączenia — nie sprawdzono aktualizacji","warn"); setBtn("Graj") }
+    else { setStatus("Brak połączenia z internetem","err"); setBtn("Spróbuj ponownie") }
+    return;
+  }
+  if (phase==="error"){
+    setStatus(lastErr,"err");
+  }
+  if (!g){ return }
+  if (!inst){
+    if (phase!=="error") setStatus("Gra nie jest zainstalowana");
+    setBtn("Pobierz grę","",false,mb(g.size||0));
+  } else if (g.versionCode>st.gameCode){
+    if (phase!=="error") setStatus("Dostępna aktualizacja "+g.versionName+"!","warn");
+    setBtn("Aktualizuj","update",false,"do wersji "+g.versionName+" · "+mb(g.size||0));
+    $("playOld").textContent="Graj w obecną wersję "+(st.gameName||"");
+    $("playOld").classList.remove("hide");
+  } else {
+    if (phase!=="error") setStatus("Masz najnowszą wersję ✓","ok");
+    setBtn("Graj");
+  }
+}
+
+function renderLists(){
+  var n = (man && man.news) || [], h="";
+  n.forEach(function(x){ h+='<div class="news"><div class="d">'+esc(x.date)+'</div><h3>'+esc(x.title)+'</h3><p>'+esc(x.text)+'</p></div>' });
+  $("news").innerHTML = h || '<div class="empty">Brak wieści</div>';
+  var c = (man && man.changelog) || [], k="";
+  c.forEach(function(x,i){
+    var isNew = man.game && x.version===man.game.versionName;
+    k+='<details'+(i===0?' open':'')+'><summary><div>Wersja '+esc(x.version)+(isNew?'<span class="tag">NOWA</span>':'')+'</div><span>'+esc(x.date)+'</span></summary><ul>';
+    (x.items||[]).forEach(function(it){ k+='<li>'+esc(it)+'</li>' });
+    k+='</ul></details>';
+  });
+  $("log").innerHTML = k || '<div class="empty">Brak</div>';
+}
+
+function check(){ phase="checking"; render(); L.check() }
+
+window.onManifest=function(txt){
+  try{ man=JSON.parse(txt) }catch(e){ phase="error"; lastErr="Błędny plik wersji"; render(); return }
+  if (phase==="checking"||phase==="offline"||phase==="error") phase="ready";
+  renderLists(); render();
+};
+window.onManifestError=function(m){ if(phase==="checking"){ phase="offline"; render() } };
+window.onProgress=function(d,t){
+  phase="downloading"; $("prog").classList.remove("hide");
+  var p = t>0 ? Math.min(100,Math.floor(d*100/t)) : 0;
+  $("fill").style.width=p+"%"; $("pPct").textContent=p+"%"; $("pMb").textContent=mb(d)+(t>0?" / "+mb(t):"");
+  setStatus("Pobieranie…"); setBtn("Pobieranie…","",true);
+};
+window.onDownloaded=function(){ setStatus("Pobrano — przygotowuję instalację…") };
+window.onInstallStarted=function(){ phase="installing"; render() };
+window.onNeedPermission=function(){ $("modal").classList.remove("hide"); phase="ready"; render(); setStatus("Czekam na pozwolenie…","warn") };
+window.onInstallResult=function(code,msg){
+  // 0 = sukces, 3 = anulowano
+  if (code===0){ phase="ready"; render(); setStatus("Zainstalowano ✓ Miłej gry!","ok") }
+  else if (code===3){ phase="ready"; render(); setStatus("Instalacja anulowana","warn") }
+  else { phase="error"; lastErr="Instalacja nie powiodła się"+(msg?": "+msg:""); render() }
+};
+window.onError=function(m){ phase="error"; lastErr=m; render() };
+window.onAppResume=function(){
+  $("modal").classList.add("hide");
+  if (phase==="installing"){ S(); if(!st.busy){ phase="ready" } }
+  if (phase!=="downloading" && phase!=="installing") render();
+};
+
+$("main").onclick=function(){
+  S();
+  var g = man && man.game, inst = st.gameCode>0;
+  if (phase==="offline" && !inst){ check(); return }
+  if (!g || (inst && g.versionCode<=st.gameCode) || phase==="offline"){ if(inst) L.play(); return }
+  phase="downloading"; render();
+  L.download(g.apk, g.sha256||"", "game");
+};
+$("playOld").onclick=function(){ L.play() };
+$("lbBtn").onclick=function(){ var l=man.launcher; phase="downloading"; render(); L.download(l.apk, l.sha256||"", "launcher") };
+$("recheck").onclick=function(){ if(phase!=="downloading"&&phase!=="installing") check() };
+$("permBtn").onclick=function(){ L.openPermission() };
+$("permCancel").onclick=function(){ $("modal").classList.add("hide"); L.cancelPending(); setStatus("") ; render() };
+
+check();
+
+// embers
+var cv=$("fx"), cx=cv.getContext("2d"), P=[], W=0, H=0, dpr=Math.min(2,window.devicePixelRatio||1);
+function rs(){ W=cv.width=innerWidth*dpr; H=cv.height=innerHeight*dpr }
+rs(); addEventListener("resize",rs);
+function sp(y){ return {x:Math.random()*W, y:y==null?H+10:y, r:(Math.random()*1.8+.6)*dpr, vy:-(Math.random()*.6+.25)*dpr, vx:(Math.random()-.5)*.3*dpr, a:Math.random()*.7+.3, w:Math.random()*6.28} }
+for(var i=0;i<55;i++) P.push(sp(Math.random()*H));
+(function loop(){
+  cx.clearRect(0,0,W,H);
+  for(var i=0;i<P.length;i++){
+    var p=P[i]; p.w+=.03; p.x+=p.vx+Math.sin(p.w)*.3*dpr; p.y+=p.vy;
+    if(p.y<-10) P[i]=p=sp();
+    var f=Math.min(1,p.y/H*1.4);
+    cx.globalAlpha=p.a*f; cx.fillStyle=i%3?"#ff7a2a":"#ffcf7a";
+    cx.beginPath(); cx.arc(p.x,p.y,p.r,0,6.283); cx.fill();
+  }
+  cx.globalAlpha=1; requestAnimationFrame(loop);
+})();
+})();
+</script>
+</body>
+</html>

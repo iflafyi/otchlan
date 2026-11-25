@@ -1,0 +1,55 @@
+{
+  "game": {
+    "package": "ua.dima.otchlan",
+    "versionName": "1.2",
+    "versionCode": 3,
+    "apk": "releases/Otchlan-1.2.apk",
+    "sha256": "7a6d262c9ce660f8229d3afcaebf9d73710a1abbd1bae873cf442055f884f4f7",
+    "size": 869246,
+    "date": "25.11.2026"
+  },
+  "launcher": {
+    "versionName": "1.0",
+    "versionCode": 1,
+    "apk": "launcher/OtchlanLauncher-1.0.apk",
+    "sha256": "3dea2076aa4384a298ec3a18c4954a2c67beabcd5d6d3aaa352e2a889645ace5",
+    "size": 95105
+  },
+  "news": [
+    {
+      "date": "25.11.2026",
+      "title": "Launcher Otchłani jest gotowy",
+      "text": "Od teraz wszystkie aktualizacje gry pojawią się tutaj. Gdy wyjdzie nowa wersja, wystarczy nacisnąć „Aktualizuj” — postęp gry zostaje zachowany."
+    }
+  ],
+  "changelog": [
+    {
+      "version": "1.2",
+      "date": "25.11.2026",
+      "items": [
+        "Cała grafika w nowym, rzeźbionym stylu: potwory, boss, NPC, budynki, rekwizyty i łupy",
+        "Nowe tekstury podłóg, murów i ziemi",
+        "Duża optymalizacja: bohater ~8× lżejszy, dużo mniej wywołań rysowania sceny",
+        "Dynamiczna rozdzielczość — przy spadku FPS gra sama zmniejsza rendering, interfejs pozostaje ostry",
+        "Potwory budują się dopiero przy pierwszym wejściu do strefy (szybsze ładowanie)"
+      ]
+    },
+    {
+      "version": "1.1",
+      "date": "24.11.2026",
+      "items": [
+        "Nowy, rzeźbiony model Barbarzyńcy w grze",
+        "Runy na toporze świecą kolorem rzadkości broni",
+        "Jakość modelu zależy od ustawienia Grafika"
+      ]
+    },
+    {
+      "version": "1.0",
+      "date": "2026",
+      "items": [
+        "Akt I: 4 zadania, Grabarz Mordek i boss Kaldor",
+        "Tryb Koszmar"
+      ]
+    }
+  ]
+}
