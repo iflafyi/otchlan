@@ -1,12 +1,12 @@
 {
   "game": {
     "package": "ua.dima.otchlan",
-    "versionName": "1.2",
-    "versionCode": 3,
-    "apk": "releases/Otchlan-1.2.apk",
-    "sha256": "7a6d262c9ce660f8229d3afcaebf9d73710a1abbd1bae873cf442055f884f4f7",
-    "size": 869246,
-    "date": "25.11.2026"
+    "versionName": "2.0",
+    "versionCode": 4,
+    "apk": "releases/Otchlan-2.0.apk",
+    "sha256": "d85716a0a53b7f16a45f29f09522f20a9d14842d2486b529cb766a6996595b4e",
+    "size": 930686,
+    "date": "26.11.2026"
   },
   "launcher": {
     "versionName": "1.0",
@@ -17,12 +17,30 @@
   },
   "news": [
     {
+      "date": "26.11.2026",
+      "title": "Wyszła wersja 2.0 „Władca Popiołu”!",
+      "text": "Dwa nowe akty, nowe potwory, legendarne przedmioty i nowe umiejętności. Naciśnij „Aktualizuj” — postęp zostaje zachowany."
+    },
+    {
       "date": "25.11.2026",
       "title": "Launcher Otchłani jest gotowy",
       "text": "Od teraz wszystkie aktualizacje gry pojawią się tutaj. Gdy wyjdzie nowa wersja, wystarczy nacisnąć „Aktualizuj” — postęp gry zostaje zachowany."
     }
   ],
   "changelog": [
+    {
+      "version": "2.0",
+      "date": "26.11.2026",
+      "items": [
+        "Akt II „Pustynia Szeptów”: oaza, pustynia, Grobowiec Achtara i boss Achtar",
+        "Akt III „Władca Popiołu”: Strażnica Świtu, Popielne Pustkowia, Piekielna Kuźnia i boss Azgaroth",
+        "Nowe potwory: mumie, skorpiony, skarabeusze, demony, piekielne ogary, upiory i inni",
+        "Nowe przedmioty: pas i spodnie, 21 legendarnych, rzadkość Pradawny, ulepszanie u kowala",
+        "Nowe umiejętności: Wstrząs Ziemi i Gniew Berserkera, rangi do 10, talenty i Chwała po 60 poziomie",
+        "Poziom trudności Piekło",
+        "Postęp z wersji 1.x zostaje zachowany"
+      ]
+    },
     {
       "version": "1.2",
       "date": "25.11.2026",
